@@ -1,0 +1,336 @@
+{
+  "metadata": {
+    "version": 1,
+    "disable_limits": false,
+    "instance_type": "ml.m5.4xlarge"
+  },
+  "nodes": [
+    {
+      "node_id": "23a95ce1-d531-4f78-b975-ad0abde06f15",
+      "type": "SOURCE",
+      "operator": "sagemaker.s3_source_0.1",
+      "parameters": {
+        "dataset_definition": {
+          "__typename": "S3CreateDatasetDefinitionOutput",
+          "datasetSourceType": "S3",
+          "name": "insurance_claims.csv",
+          "description": null,
+          "s3ExecutionContext": {
+            "__typename": "S3ExecutionContext",
+            "s3Uri": "s3://sagemaker-us-east-1-447341124968/data-preparation-using-amazon-sagemaker-and-glue-databrew/DataSet/insurance_claims.csv",
+            "s3ContentType": "csv",
+            "s3HasHeader": true,
+            "s3FieldDelimiter": ",",
+            "s3DirIncludesNested": false,
+            "s3AddsFilenameColumn": false
+          }
+        }
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "a012c021-dbcf-4827-8740-891f502a9506",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.infer_and_cast_type_0.1",
+      "parameters": {},
+      "trained_parameters": {
+        "schema": {
+          "_c0": "long",
+          "fraud_reported": "string",
+          "months_as_customer": "long",
+          "age": "long",
+          "policy_number": "long",
+          "policy_state": "long",
+          "policy_deductable": "long",
+          "policy_annual_premium": "float",
+          "umbrella_limit": "long",
+          "insured_sex": "string",
+          "insured_education_level": "long",
+          "insured_occupation": "long",
+          "insured_relationship": "long",
+          "capital-gains": "long",
+          "capital-loss": "long",
+          "incident_type": "long",
+          "incident_severity": "long",
+          "authorities_contacted": "long",
+          "incident_state": "long",
+          "incident_city": "long",
+          "incident_location": "long",
+          "incident_hour_of_the_day": "long",
+          "number_of_vehicles_involved": "long",
+          "bodily_injuries": "long",
+          "witnesses": "long",
+          "police_report_available": "string",
+          "total_claim_amount": "long",
+          "injury_claim": "long",
+          "property_claim": "long",
+          "vehicle_claim": "long",
+          "auto_make": "long"
+        }
+      },
+      "inputs": [
+        {
+          "name": "default",
+          "node_id": "23a95ce1-d531-4f78-b975-ad0abde06f15",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "82b30ce3-5a9b-4909-a275-607caff4e1cc",
+      "type": "VISUALIZATION",
+      "operator": "sagemaker.visualizations.describe_0.1",
+      "parameters": {
+        "name": "Fraud Detection Summary"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "23a95ce1-d531-4f78-b975-ad0abde06f15",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "44410a85-d482-49fa-ad7f-9efc7035e165",
+      "type": "VISUALIZATION",
+      "operator": "sagemaker.visualizations.histogram_0.1",
+      "parameters": {
+        "name": "Fraud by gender",
+        "x_axis": "fraud_reported",
+        "color_by": "insured_sex"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "23a95ce1-d531-4f78-b975-ad0abde06f15",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "328d5cfd-2471-4c68-9505-ea7e2b72d41f",
+      "type": "VISUALIZATION",
+      "operator": "sagemaker.visualizations.bias_report_0.1",
+      "parameters": {
+        "name": "Analysis for Bias",
+        "is_label_value_or_threshold": "value",
+        "is_facet_value_or_threshold": "value",
+        "default_metrics": {
+          "CI": true,
+          "DPL": true,
+          "JS": true,
+          "CDDL": false
+        },
+        "group_name": "",
+        "show_additional_metrics": "no",
+        "facet_values": "",
+        "label_name": "fraud_reported",
+        "label_values": "Y",
+        "facet_name": "insured_education_level",
+        "metrics": {
+          "CI": true,
+          "DPL": true,
+          "JS": true,
+          "CDDL": false
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "23a95ce1-d531-4f78-b975-ad0abde06f15",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "7c206778-5a63-4278-95d3-9250f6782e73",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.search_and_edit_0.1",
+      "parameters": {
+        "operator": "Find and replace substring",
+        "find_and_replace_substring_parameters": {
+          "input_column": [
+            "police_report_available"
+          ],
+          "pattern": "\\?",
+          "replacement": ""
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "a012c021-dbcf-4827-8740-891f502a9506",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "fcab3f3e-aa3c-41ce-828b-61a4e7e99222",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.handle_missing_0.1",
+      "parameters": {
+        "operator": "Drop missing",
+        "drop_missing_parameters": {
+          "input_column": [
+            "police_report_available"
+          ]
+        },
+        "impute_parameters": {
+          "column_type": "Numeric",
+          "numeric_parameters": {
+            "strategy": "Approximate Median"
+          }
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "7c206778-5a63-4278-95d3-9250f6782e73",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "529c3baf-4e18-4528-a801-c7fb019ebbeb",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.manage_columns_0.1",
+      "parameters": {
+        "operator": "Drop column",
+        "drop_column_parameters": {
+          "column_to_drop": [
+            "months_as_customer"
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "fcab3f3e-aa3c-41ce-828b-61a4e7e99222",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "ebcf1f38-c072-4633-ae4c-16aeb28cc9ee",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.encode_categorical_0.1",
+      "parameters": {
+        "operator": "Ordinal encode",
+        "ordinal_encode_parameters": {
+          "invalid_handling_strategy": "Replace with NaN",
+          "input_column": [
+            "fraud_reported"
+          ]
+        }
+      },
+      "trained_parameters": {
+        "ordinal_encode_parameters": {
+          "_hash": "a7831b225b26688932e058a5783c21267ed3dab7",
+          "string_indexer_model": "P)h>@6aWAK2ml;P?Nsw+n6=~p003+O000vJ003=ebYWy+bYU-WVRCdWFfcGMFm;d3PQx$|gzr3t&#9FvY0~xzmmVsRKwP7hJ#C}<kF|{`Ro)#dNC+x%Tg}dVvwIcFP>f<LJRc<mQYXk5h|kg*c>tx%kk5%ncicIR5Afb=7*UBdTEs*)i0!gl^?lu}mtE7gm6-Fd;5d3$$c?OJy&(JP7In$xQ5W$Kav;@qn;zKIt97xIJlQ=J@>QJ3X@i}6Co>1nKq!{cg`DoaDawH<>wytGC+M>CIsGgXY#3A-r%GrXD4X>3iyr4Q9$AB5E&($QZy8Qq9uQT5-S&go^G(VB&kV!2PfXL@7f?$B1QY-O00;maO6^p6=G_nu0000C0000O0001OWprU=VRT_HE^uLTbS*G2FfcGKV{&6lE=p!#U|?d{IwSQn08mQ<1QY-O00;maO6^o)Vo#=i0RRAJ0ssI=0001FVRT_HaA9(EEif=JFfc7KWHw<nIALKeIbkqlEi_^?GA&_dG-fSjVlgvjVPP^kFfukRV=yo<E^}^SaBz7paA9(Bb!BvoQcX+4KoFh8SPS;LVHa{J3oRDvl9(FX;>DYIC?Xyd5!o~w8{MQeyH!f*@AGfDwN<Mkco}Bio3A&_`N>6q03D!C8#%_Qpo$m4o^_3_0RRwh%h;_dIM$B84`7*Sur$}mCi1kVCcJ#SQ^S$SIkMr<#=DZoLaLLp<TGTW3LHAvk(tsfdPhi+i$edTP_6MrHUM0kc*JW~JyatNsF178zVAgJ$=?EGyN)|@ADY$UPZh*7y1>jZT}Q4Bq>b^oyk~sE&ED)?0(%yv%EkrW4w=t<z^z{y>Pa%=JWYjW<@kl=Li2=cj$f@g)w7A9eX4Xh9ctR9X(nW%X#ZwT3!X2jjr9$`%Kxn6Yj~~V@*nJSR#w~_csMRJ&k8k|N=f@>1F`r6EKI;-DONz6en>F07K_^j;Ip;B{k*KNFH#R!;Ip8<7f&;p)cv%Vq@6GkX&QICX>ycyqbN$EFzN-}&OsRZX(x)4UW<61Ie61t{oK6R8&FFF1QY-O00;maO6^qiM8*pe0000G0000@0001FVRT_HE^uLTbS*G2FfcGJF=RGjH8^2mEjeK@WGyseGcqk<W;A9kWnwWiW?^A6IWRIdEn_e+FfMa$VQ_GHE^uLTadl;ME@N_IOD;-gU|?Wkn3v1><Ss|#DgaPR0Rj{Q6aWAK2ml;P?Nsw+n6=~p003+O000vJ0000000000005+c00000ZDn*}WMOn+FK}UUbS*G2FfcGsO928D0~7!N00;maO6^p6=G_nu0000C0000O00000000000001_ffWG&0BvP-VPs)+VJ|LlVRCdWFfcGMFfL<qV^B*00u%!j00008031r~RAORJrhWkc0A~UK07w7;00000000000HlFg0RRAGVRT_HaA9(EEif=JFfc7KWHw<nIALKeIbkqlEi_^?GA&_dG-fSjVlgvjVPP^kFfukRV=yo<E^}^SaBz7paA9(Bb!Bu=O928D0~7!N00;maO6^qiM8*pe0000G0000@00000000000001_fjt8N0AyiwVJ|LlVRCdWFfcGMFfB1;Heoe5VPP#fVK8JZG-5L{En#LfW-Vo6F*9aiVKO-|GBzz^FfcGKb8ca9aCt6pVRCVGWpplMa$`_S1qJ{B000C41ORve006oJ00000"
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "529c3baf-4e18-4528-a801-c7fb019ebbeb",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "158eca89-b714-42ad-a98f-3b15816840d9",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.custom_code_0.1",
+      "parameters": {
+        "operator": "Python (Pandas)",
+        "pandas_parameters": {
+          "code": "from sklearn.preprocessing import LabelEncoder\nle=LabelEncoder()\nfor i in list(df.columns):\n    if df[i].dtype=='object':\n        df[i]=le.fit_transform(df[i])\n"
+        },
+        "pyspark_parameters": {
+          "code": "from sklearn.preprocessing import LabelEncoder\nle=LabelEncoder()\nfor i in list(df.columns):\n    if df[i].dtype=='object':\n        df[i]=le.fit_transform(df[i])\n"
+        },
+        "name": "categorical encoding with custom pandas"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "ebcf1f38-c072-4633-ae4c-16aeb28cc9ee",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "8b96f086-6435-4f04-82d8-a53b5f883497",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.cast_single_data_type_0.1",
+      "parameters": {
+        "column": "fraud_reported",
+        "original_data_type": "Float",
+        "data_type": "long"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "158eca89-b714-42ad-a98f-3b15816840d9",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}
